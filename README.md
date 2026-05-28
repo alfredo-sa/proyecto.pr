@@ -21,7 +21,7 @@ ClassUP opera como un marketplace de conocimiento entre pares donde la confianza
 | Para el tutor | Para el alumno |
 |---|---|
 | Ingresos reales por conocimientos que ya tiene | Acceso a tutores verificados y calificados |
-| Perfil profesional con historial de clases | Precios hasta un 60% menores al mercado informal |
+| Perfil profesional con historial de clases | Precios visibles y economicos |
 | Pagos seguros y sin intermediarios incómodos | Matching por materia, nivel y disponibilidad horaria |
 | Certificado de experiencia docente descargable | Preparación específica para ingreso universitario |
 
