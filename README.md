@@ -1,6 +1,6 @@
  # Proyecto
 
-# Informe resumido — AprendoAR
+# Informe resumido — ClassUP
 
 ---
 
