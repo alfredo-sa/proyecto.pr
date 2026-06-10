@@ -1,167 +1,157 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
-  Box,
   Button,
-  Avatar,
   IconButton,
+  Box,
   Drawer,
   List,
-  ListItem,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
-  Divider,
-} from '@mui/material';
-import SchoolIcon from '@mui/icons-material/School';
-import LightModeIcon from '@mui/icons-material/LightMode';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LogoutIcon from '@mui/icons-material/Logout';
-import MenuIcon from '@mui/icons-material/Menu';
-import { useUsuario } from '../../contexts/UsuarioContext';
-import { useTema } from '../../contexts/TemaContext';
-const NAV_LINKS = [
-  { label: 'Inicio', path: '/home' },
-  { label: 'Buscar', path: '/search' },
-  { label: 'Reservas', path: '/bookings' },
-  { label: 'Dashboard', path: '/dashboard' },
+  Tooltip,
+  Avatar,
+  useMediaQuery,
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import SchoolIcon from "@mui/icons-material/School";
+import HomeIcon from "@mui/icons-material/Home";
+import HowToRegIcon from "@mui/icons-material/HowToReg";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useTema } from "../../contexts/TemaContext.jsx";
+import { useUsuario } from "../../contexts/UsuarioContext.jsx";
+
+const links = [
+  { to: "/", label: "Inicio", icon: <HomeIcon /> },
+  { to: "/registro", label: "Inscripción", icon: <HowToRegIcon /> },
+  { to: "/dashboard", label: "Dashboard", icon: <DashboardIcon /> },
 ];
-function Navbar() {
+
+export default function Navbar() {
+  const { modo, toggleTema } = useTema();
+  const { usuario, logout } = useUsuario();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
-  const { usuario, logout } = useUsuario() || {};
-  const { modoOscuro, toggleTema } = useTema() || {};
-  const [drawerAbierto, setDrawerAbierto] = useState(false);
+  const location = useLocation();
+  const [open, setOpen] = useState(false);
+
   const handleLogout = () => {
     logout?.();
-    navigate('/login');
+    navigate("/login");
   };
-  const toggleDrawer = (abierto) => () => {
-    setDrawerAbierto(abierto);
-  };
-  const obtenerInicial = (nombre) => {
-    if (!nombre) return '?';
-    return nombre.charAt(0).toUpperCase();
-  };
+
+  const isActive = (to) => location.pathname === to;
+
   return (
     <>
-      <AppBar position="sticky" sx={{ bgcolor: 'background.paper', color: 'text.primary' }} elevation={1}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          {/* Logo */}
-          <Box
+      <AppBar position="sticky" color="default" elevation={0}>
+        <Toolbar sx={{ gap: 2 }}>
+          <SchoolIcon color="primary" />
+          <Typography
+            variant="h6"
             component={Link}
-            to="/home"
+            to="/"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              textDecoration: 'none',
-              color: 'inherit',
+              fontWeight: 700,
+              color: "primary.main",
+              textDecoration: "none",
+              flexGrow: 1,
             }}
           >
-            <SchoolIcon sx={{ color: '#2563eb', mr: 1 }} />
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              ClassUP
-            </Typography>
-          </Box>
-          {/* Desktop nav + actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Links desktop (ocultos en mobile) */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-              {NAV_LINKS.map((link) => (
-                <Button
-                  key={link.path}
-                  component={Link}
-                  to={link.path}
-                  sx={{ color: 'text.primary', textTransform: 'none' }}
-                >
-                  {link.label}
-                </Button>
-              ))}
-            </Box>
-            {/* Toggle tema */}
-            <IconButton onClick={toggleTema} sx={{ color: 'text.primary' }}>
-              {modoOscuro ? <LightModeIcon /> : <DarkModeIcon />}
+            ClassUP
+          </Typography>
+
+          {!isMobile &&
+            links.map((l) => (
+              <Button
+                key={l.to}
+                component={Link}
+                to={l.to}
+                startIcon={l.icon}
+                color={isActive(l.to) ? "primary" : "inherit"}
+                variant={isActive(l.to) ? "outlined" : "text"}
+              >
+                {l.label}
+              </Button>
+            ))}
+
+          <Tooltip title={modo === "light" ? "Modo oscuro" : "Modo claro"}>
+            <IconButton onClick={toggleTema} color="inherit">
+              {modo === "light" ? <DarkModeIcon /> : <LightModeIcon />}
             </IconButton>
-            {/* Auth */}
-            {usuario ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Avatar sx={{ bgcolor: '#2563eb', width: 32, height: 32, fontSize: 14 }}>
-                  {obtenerInicial(usuario.nombre)}
+          </Tooltip>
+
+          {usuario ? (
+            <>
+              {!isMobile && (
+                <Avatar sx={{ bgcolor: "primary.main", width: 32, height: 32 }}>
+                  {usuario?.nombre?.[0]?.toUpperCase() || "U"}
                 </Avatar>
+              )}
+              {!isMobile && (
                 <Button
-                  variant="outlined"
-                  size="small"
-                  startIcon={<LogoutIcon />}
                   onClick={handleLogout}
-                  sx={{
-                    textTransform: 'none',
-                    color: 'text.primary',
-                    borderColor: 'divider',
-                    display: { xs: 'none', sm: 'flex' },
-                  }}
+                  startIcon={<LogoutIcon />}
+                  color="inherit"
                 >
                   Salir
                 </Button>
-              </Box>
-            ) : (
+              )}
+            </>
+          ) : (
+            !isMobile && (
               <Button
+                component={Link}
+                to="/login"
                 variant="contained"
-                size="small"
-                onClick={() => navigate('/login')}
-                sx={{
-                  bgcolor: '#2563eb',
-                  '&:hover': { bgcolor: '#1d4ed8' },
-                  textTransform: 'none',
-                }}
+                startIcon={<LoginIcon />}
               >
-                Iniciar Sesión
+                Iniciar sesión
               </Button>
-            )}
-            {/* Menú hamburguesa mobile */}
-            <IconButton
-              sx={{ display: { md: 'none' }, color: 'text.primary' }}
-              onClick={toggleDrawer(true)}
-            >
+            )
+          )}
+
+          {isMobile && (
+            <IconButton onClick={() => setOpen(true)} color="inherit">
               <MenuIcon />
             </IconButton>
-          </Box>
+          )}
         </Toolbar>
       </AppBar>
-      {/* Drawer mobile */}
-      <Drawer anchor="right" open={drawerAbierto} onClose={toggleDrawer(false)}>
-        <Box sx={{ width: 260, pt: 2 }}>
-          <Box sx={{ px: 2, pb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
-            <SchoolIcon sx={{ color: '#2563eb' }} />
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              ClassUP
-            </Typography>
-          </Box>
-          <Divider />
+
+      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+        <Box sx={{ width: 250 }} role="presentation" onClick={() => setOpen(false)}>
           <List>
-            {NAV_LINKS.map((link) => (
-              <ListItem key={link.path} disablePadding>
-                <ListItemButton component={Link} to={link.path} onClick={toggleDrawer(false)}>
-                  <ListItemText primary={link.label} />
-                </ListItemButton>
-              </ListItem>
+            {links.map((l) => (
+              <ListItemButton
+                key={l.to}
+                component={Link}
+                to={l.to}
+                selected={isActive(l.to)}
+              >
+                <ListItemIcon>{l.icon}</ListItemIcon>
+                <ListItemText primary={l.label} />
+              </ListItemButton>
             ))}
-          </List>
-          <Divider />
-          <List>
             {usuario ? (
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => { handleLogout(); toggleDrawer(false)(); }}>
-                  <LogoutIcon sx={{ mr: 1, color: 'text.secondary' }} />
-                  <ListItemText primary="Salir" />
-                </ListItemButton>
-              </ListItem>
+              <ListItemButton onClick={handleLogout}>
+                <ListItemIcon><LogoutIcon /></ListItemIcon>
+                <ListItemText primary="Salir" />
+              </ListItemButton>
             ) : (
-              <ListItem disablePadding>
-                <ListItemButton component={Link} to="/login" onClick={toggleDrawer(false)}>
-                  <ListItemText primary="Iniciar Sesión" />
-                </ListItemButton>
-              </ListItem>
+              <ListItemButton component={Link} to="/login">
+                <ListItemIcon><LoginIcon /></ListItemIcon>
+                <ListItemText primary="Iniciar sesión" />
+              </ListItemButton>
             )}
           </List>
         </Box>
@@ -169,4 +159,3 @@ function Navbar() {
     </>
   );
 }
-export default Navbar;

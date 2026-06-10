@@ -14,6 +14,9 @@ import {
   Avatar,
   Chip,
   LinearProgress,
+  BottomNavigation,
+  BottomNavigationAction,
+  Paper,
   Link as MuiLink,
   Stack,
 } from '@mui/material';
@@ -21,6 +24,10 @@ import SearchIcon from '@mui/icons-material/Search';
 import SchoolIcon from '@mui/icons-material/School';
 import PersonIcon from '@mui/icons-material/Person';
 import StarIcon from '@mui/icons-material/Star';
+import HomeIcon from '@mui/icons-material/Home';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import TranslateIcon from '@mui/icons-material/Translate';
 import { useUsuario } from '../contexts/UsuarioContext';
@@ -63,6 +70,7 @@ const PROGRESO_MATERIAS = [
 function Home() {
   const { usuario } = useUsuario() || {};
   const nombre = usuario?.nombre || 'Mateo';
+  const [tabActivo, setTabActivo] = useState(0);
   const [busqueda, setBusqueda] = useState('');
   const [nivel, setNivel] = useState('');
   const [presupuesto, setPresupuesto] = useState('');
@@ -80,6 +88,7 @@ function Home() {
         sx={{
           width: '100%',
           maxWidth: 480,
+          pb: 10,
           position: 'relative',
         }}
       >
@@ -397,6 +406,33 @@ function Home() {
             ))}
           </Stack>
         </Box>
+        {/* Bottom Navigation */}
+        <Paper
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '100%',
+            maxWidth: 480,
+            zIndex: 10,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+          }}
+          elevation={3}
+        >
+          <BottomNavigation
+            value={tabActivo}
+            onChange={(_, nuevo) => setTabActivo(nuevo)}
+            showLabels
+          >
+            <BottomNavigationAction label="Home" icon={<HomeIcon />} />
+            <BottomNavigationAction label="Search" icon={<SearchIcon />} />
+            <BottomNavigationAction label="Bookings" icon={<EventNoteIcon />} />
+            <BottomNavigationAction label="Dashboard" icon={<DashboardIcon />} />
+            <BottomNavigationAction label="Profile" icon={<AccountCircleIcon />} />
+          </BottomNavigation>
+        </Paper>
       </Box>
     </Box>
   );
