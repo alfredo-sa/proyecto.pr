@@ -70,7 +70,6 @@ const PROGRESO_MATERIAS = [
 function Home() {
   const { usuario } = useUsuario() || {};
   const nombre = usuario?.nombre || 'Mateo';
-  const [tabActivo, setTabActivo] = useState(0);
   const [busqueda, setBusqueda] = useState('');
   const [nivel, setNivel] = useState('');
   const [presupuesto, setPresupuesto] = useState('');
@@ -127,12 +126,14 @@ function Home() {
                   placeholder="Materia, tema o profesor"
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon sx={{ color: 'text.secondary' }} />
-                      </InputAdornment>
-                    ),
+                   slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ color: 'text.secondary' }} />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
                 <FormControl fullWidth size="small">
@@ -155,10 +156,14 @@ function Home() {
                   label="Presupuesto Máx."
                   value={presupuesto}
                   onChange={(e) => setPresupuesto(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">ARS</InputAdornment>
-                    ),
+                   slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ color: 'text.secondary' }} />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
                 />
                 <Button
@@ -406,33 +411,6 @@ function Home() {
             ))}
           </Stack>
         </Box>
-        {/* Bottom Navigation */}
-        <Paper
-          sx={{
-            position: 'fixed',
-            bottom: 0,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '100%',
-            maxWidth: 480,
-            zIndex: 10,
-            borderTop: '1px solid',
-            borderColor: 'divider',
-          }}
-          elevation={3}
-        >
-          <BottomNavigation
-            value={tabActivo}
-            onChange={(_, nuevo) => setTabActivo(nuevo)}
-            showLabels
-          >
-            <BottomNavigationAction label="Home" icon={<HomeIcon />} />
-            <BottomNavigationAction label="Search" icon={<SearchIcon />} />
-            <BottomNavigationAction label="Bookings" icon={<EventNoteIcon />} />
-            <BottomNavigationAction label="Dashboard" icon={<DashboardIcon />} />
-            <BottomNavigationAction label="Profile" icon={<AccountCircleIcon />} />
-          </BottomNavigation>
-        </Paper>
       </Box>
     </Box>
   );
